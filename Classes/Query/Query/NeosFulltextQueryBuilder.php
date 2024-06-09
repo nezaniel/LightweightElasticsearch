@@ -19,11 +19,9 @@ class NeosFulltextQueryBuilder implements SearchQueryBuilderInterface, Protected
 {
     protected BooleanQueryBuilder $boolQuery;
 
-    public static function create(Node $contextNode, ContentRepositoryRegistry $contentRepositoryRegistry): self
+    public static function create(Node $contextNode): self
     {
-        $contentRepository = $contentRepositoryRegistry->get($contextNode->subgraphIdentity->contentRepositoryId);
-        $workspace = $contentRepository->getWorkspaceFinder()->findOneByCurrentContentStreamId($contextNode->subgraphIdentity->contentStreamId);
-        return new self($contextNode, $workspace?->workspaceName);
+        return new self($contextNode, $contextNode->workspaceName);
     }
 
     private function __construct(Node $contextNode, ?WorkspaceName $workspaceName)

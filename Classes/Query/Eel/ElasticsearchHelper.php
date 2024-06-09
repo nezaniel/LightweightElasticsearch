@@ -13,13 +13,12 @@ namespace Sandstorm\LightweightElasticsearch\Query\Eel;
  * source code.
  */
 
+use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\Flow\Annotations as Flow;
-use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Eel\ProtectedContextAwareInterface;
 use Psr\Log\LoggerInterface;
-use Sandstorm\LightweightElasticsearch\ElasticsearchApiClient\ElasticsearchApiClient;
 use Sandstorm\LightweightElasticsearch\Factory\ElasticsearchFactory;
 use Sandstorm\LightweightElasticsearch\Query\Aggregation\TermsAggregationBuilder;
 use Sandstorm\LightweightElasticsearch\Query\AggregationRequestBuilder;
@@ -28,7 +27,6 @@ use Sandstorm\LightweightElasticsearch\Query\Query\BooleanQueryBuilder;
 use Sandstorm\LightweightElasticsearch\Query\Query\NeosFulltextQueryBuilder;
 use Sandstorm\LightweightElasticsearch\Query\Query\TermQueryBuilder;
 use Sandstorm\LightweightElasticsearch\Query\SearchRequestBuilder;
-use Sandstorm\LightweightElasticsearch\Settings\ElasticsearchSettings;
 
 /**
  * Eel Helper to write search queries.
@@ -59,7 +57,7 @@ class ElasticsearchHelper implements ProtectedContextAwareInterface
      */
     public function createRequest(Node $contextNode = null, array $additionalIndices = []): SearchRequestBuilder
     {
-        $contentRepositoryId = $contextNode?->subgraphIdentity->contentRepositoryId ?? ContentRepositoryId::fromString('default');
+        $contentRepositoryId = $contextNode?->contentRepositoryId ?? ContentRepositoryId::fromString('default');
         $elasticsearch = $this->elasticsearchFactory->build(
             $contentRepositoryId,
             $this->logger
@@ -74,7 +72,7 @@ class ElasticsearchHelper implements ProtectedContextAwareInterface
 
     public function createNeosFulltextQuery(Node $contextNode): NeosFulltextQueryBuilder
     {
-        return NeosFulltextQueryBuilder::create($contextNode, $this->contentRepositoryRegistry);
+        return NeosFulltextQueryBuilder::create($contextNode);
     }
 
     public function createTermQuery(string $fieldName, $value): TermQueryBuilder
@@ -84,7 +82,7 @@ class ElasticsearchHelper implements ProtectedContextAwareInterface
 
     public function createAggregationRequest(Node $contextNode = null, array $additionalIndices = []): AggregationRequestBuilder
     {
-        $contentRepositoryId = $contextNode?->subgraphIdentity->contentRepositoryId ?? ContentRepositoryId::fromString('default');
+        $contentRepositoryId = $contextNode?->contentRepositoryId ?? ContentRepositoryId::fromString('default');
         $elasticsearch = $this->elasticsearchFactory->build(
             $contentRepositoryId,
             $this->logger

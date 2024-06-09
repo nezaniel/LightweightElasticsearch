@@ -2,8 +2,7 @@
 
 namespace Sandstorm\LightweightElasticsearch\Factory;
 
-use A\B;
-use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
+use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Eel\CompilingEvaluator;
 use Neos\Flow\Annotations as Flow;
@@ -12,7 +11,6 @@ use Sandstorm\LightweightElasticsearch\ElasticsearchApiClient\ApiCalls\IngestPip
 use Sandstorm\LightweightElasticsearch\ElasticsearchApiClient\ApiCalls\SystemApiCalls;
 use Sandstorm\LightweightElasticsearch\Indexing\AliasManager;
 use Sandstorm\LightweightElasticsearch\Indexing\BulkRequestSenderFactory;
-use Sandstorm\LightweightElasticsearch\Indexing\CustomIndexer;
 use Sandstorm\LightweightElasticsearch\Indexing\CustomIndexerFactory;
 use Sandstorm\LightweightElasticsearch\Indexing\SubgraphIndexer;
 use Sandstorm\LightweightElasticsearch\Indexing\IndexingEelEvaluator;

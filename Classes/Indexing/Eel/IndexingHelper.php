@@ -42,11 +42,7 @@ class IndexingHelper implements ProtectedContextAwareInterface
 
     public function workspaceNameForNode(Node $node): string
     {
-        $contentRepository = $this->contentRepositoryRegistry->get($node->subgraphIdentity->contentRepositoryId);
-        $workspace = $contentRepository->getWorkspaceFinder()->findOneByCurrentContentStreamId($node->subgraphIdentity->contentStreamId);
-
-        return $workspace->workspaceName->value;
-
+        return $node->workspaceName->value;
     }
 
     /**

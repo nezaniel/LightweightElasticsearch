@@ -9,6 +9,7 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\NodeType\NodeType
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Projection\Workspace\Workspace;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Log\Utility\LogEnvironment;
 use Sandstorm\LightweightElasticsearch\Elasticsearch;
@@ -32,16 +33,16 @@ class SubgraphIndexer
     ) {
     }
 
-    public function indexSubgraph(ContentSubgraphInterface $subgraph, Workspace $workspace, IndexName $indexName, Elasticsearch $elasticsearch): void
+    public function indexSubgraph(ContentSubgraphInterface $subgraph, WorkspaceName $workspaceName, IndexName $indexName, Elasticsearch $elasticsearch): void
     {
         $bulkRequestSender = $this->bulkRequestSenderFactory->withIndexName($indexName);
         // TODO: single site??
         $node = $subgraph->findRootNodeByType(NodeTypeName::fromString('Neos.Neos:Sites')); // TODO
-        $this->indexDocumentNodesRecursively($node->nodeAggregateId, $subgraph, $workspace, $bulkRequestSender, $elasticsearch);
+        $this->indexDocumentNodesRecursively($node->nodeAggregateId, $subgraph, $workspaceName, $bulkRequestSender, $elasticsearch);
         $bulkRequestSender->close();
     }
 
-    private function indexDocumentNodesRecursively(NodeAggregateId $parentNodeAggregateId, ContentSubgraphInterface $subgraph, Workspace $workspace, BulkRequestSender $bulkRequestSender, Elasticsearch $elasticsearch): void
+    private function indexDocumentNodesRecursively(NodeAggregateId $parentNodeAggregateId, ContentSubgraphInterface $subgraph, WorkspaceName $workspaceName, BulkRequestSender $bulkRequestSender, Elasticsearch $elasticsearch): void
     {
         $documentNodes = $subgraph->findChildNodes(
             $parentNodeAggregateId,
@@ -51,17 +52,17 @@ class SubgraphIndexer
         );
 
         foreach ($documentNodes as $childNode) {
-            $this->indexDocumentNodeAndContent($childNode, $subgraph, $workspace, $bulkRequestSender, $elasticsearch);
+            $this->indexDocumentNodeAndContent($childNode, $subgraph, $workspaceName, $bulkRequestSender, $elasticsearch);
 
             // recursion
-            $this->indexDocumentNodesRecursively($childNode->nodeAggregateId, $subgraph, $workspace, $bulkRequestSender, $elasticsearch);
+            $this->indexDocumentNodesRecursively($childNode->nodeAggregateId, $subgraph, $workspaceName, $bulkRequestSender, $elasticsearch);
         }
     }
 
     /**
      * Index this node, and add it to the current bulk request.
      */
-    private function indexDocumentNodeAndContent(Node $node, ContentSubgraphInterface $subgraph, Workspace $workspace, BulkRequestSender $bulkRequestSender, Elasticsearch $elasticsearch): void
+    private function indexDocumentNodeAndContent(Node $node, ContentSubgraphInterface $subgraph, WorkspaceName $workspaceName, BulkRequestSender $bulkRequestSender, Elasticsearch $elasticsearch): void
     {
         $nodeTypeSearchSettings = NodeTypeSearchSettings::fromNodeType($node->nodeType, $this->settings->defaultConfigurationPerType);
         if (!$nodeTypeSearchSettings->isIndexed) {
@@ -80,7 +81,7 @@ class SubgraphIndexer
             $elasticsearch->logger->info(sprintf('Node "%s" (%s) indexed (without fulltext).', $node->nodeAggregateId->value, $node->nodeTypeName->value), LogEnvironment::fromMethodName(__METHOD__));
         }
 
-        $elasticsearchDocument['neos_workspace'] = $workspace->workspaceName->value;
+        $elasticsearchDocument['neos_workspace'] = $workspaceName->value;
         $elasticsearchDocument[MappingDefinition::NEOS_TYPE_FIELD] = $node->nodeTypeName->value;
         $elasticsearchDocument[IndexDiscriminator::KEY] = IndexDiscriminator::NEOS_NODES;
 

@@ -18,6 +18,7 @@ use Flowpack\ElasticSearch\ContentRepositoryAdaptor\Exception;
 use Flowpack\ElasticSearch\ContentRepositoryAdaptor\Indexer\NodeIndexer;
 use Flowpack\ElasticSearch\ContentRepositoryAdaptor\Service\DimensionsService;
 use Flowpack\ElasticSearch\Domain\Model\Mapping;
+use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepository\Domain\Service\ContentDimensionCombinator;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
@@ -45,8 +46,8 @@ class NodeIndexMappingCommandController extends CommandController
 
         $headers = ['Dimension Preset', 'Index Name'];
         $rows = [];
-        $contentRepository = $this->contentRepositoryRegistry->get(\Neos\ContentRepository\Core\Factory\ContentRepositoryId::fromString('default'));
-        $dimensionSpacePoints = $contentRepository->getInterDimensionalVariationGraph()->getDimensionSpacePoints();
+        $contentRepository = $this->contentRepositoryRegistry->get(ContentRepositoryId::fromString('default'));
+        $dimensionSpacePoints = $contentRepository->getVariationGraph()->getDimensionSpacePoints();
         // TODO 9.0 migration: try to directly work with $dimensionSpacePoints, instead of converting them to the legacy dimension format
 
 

@@ -4,7 +4,6 @@ declare(strict_types=1);
 namespace Sandstorm\LightweightElasticsearch\Query;
 
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
-use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Eel\ProtectedContextAwareInterface;
 use Neos\Flow\Annotations as Flow;
@@ -26,18 +25,13 @@ abstract class AbstractSearchRequestBuilder implements ProtectedContextAwareInte
     protected bool $logThisQuery = false;
 
     protected string $logMessage;
-    private WorkspaceName $workspaceName;
 
     public function __construct(
         protected readonly ContentRepositoryRegistry $contentRepositoryRegistry,
         protected readonly Elasticsearch $elasticsearch,
         protected readonly Node|null $contextNode = null,
         protected readonly array $additionalAliases = [],
-
     ) {
-        $contentRepository = $this->contentRepositoryRegistry->get($this->contextNode->subgraphIdentity->contentRepositoryId);
-        $workspace = $contentRepository->getWorkspaceFinder()->findOneByCurrentContentStreamId($this->contextNode->subgraphIdentity->contentStreamId);
-        $this->workspaceName = $workspace->workspaceName;
         foreach ($this->additionalAliases as $alias) {
             if (!$alias instanceof AliasName) {
                 throw new \RuntimeException('alias is no AliasName, but ' . get_class($alias), 1693488463);
@@ -74,9 +68,9 @@ abstract class AbstractSearchRequestBuilder implements ProtectedContextAwareInte
             if ($this->contextNode !== null) {
                 $aliasNames[] = AliasName::createForWorkspaceAndDimensionSpacePoint(
                     $this->elasticsearch->settings->nodeIndexNamePrefix,
-                    $this->contextNode->subgraphIdentity->contentRepositoryId,
-                    $this->workspaceName,
-                    $this->contextNode->subgraphIdentity->dimensionSpacePoint,
+                    $this->contextNode->contentRepositoryId,
+                    $this->contextNode->workspaceName,
+                    $this->contextNode->dimensionSpacePoint,
                 );
             }
 

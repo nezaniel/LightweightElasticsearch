@@ -1,10 +1,8 @@
 <?php
 
-namespace Sandstorm\LightweightElasticsearch\SharedModel;
+declare(strict_types=1);
 
-use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
-use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
-use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
+namespace Sandstorm\LightweightElasticsearch\SharedModel;
 
 /**
  * This value object is used to separate different data types in the same query; i.e. between Neos Nodes

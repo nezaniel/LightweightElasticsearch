@@ -897,7 +897,7 @@ declare(strict_types=1);
 
 namespace Your\Package\Command;
 
-use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
+use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Cli\CommandController;
 use Neos\Flow\Log\Backend\ConsoleBackend;
