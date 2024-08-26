@@ -123,7 +123,7 @@ class IndexingHelper implements ProtectedContextAwareInterface
      *
      * @return array<mixed>
      */
-    public function extractHtmlTags(string $string): array
+    public function extractHtmlTags(?string $string): array
     {
         if (!$string || trim($string) === "") {
             return [];
@@ -171,7 +171,7 @@ class IndexingHelper implements ProtectedContextAwareInterface
     /**
      * @return array<mixed>
      */
-    public function extractInto(string $bucketName, string|int|float $string): array
+    public function extractInto(string $bucketName, string|int|float|null $string): array
     {
         return [
             $bucketName => (string)$string
