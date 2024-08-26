@@ -13,7 +13,9 @@ namespace Sandstorm\LightweightElasticsearch\Indexing\Eel;
  * source code.
  */
 
+use Neos\ContentRepository\Core\Feature\SubtreeTagging\Dto\SubtreeTag;
 use Neos\ContentRepository\Core\NodeType\NodeType;
+use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\Flow\Annotations as Flow;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
@@ -41,22 +43,26 @@ class IndexingHelper implements ProtectedContextAwareInterface
     #[Flow\Inject]
     protected LoggerInterface $logger;
 
-    public function workspaceNameForNode(Node $node): string
-    {
-        return $node->workspaceName->value;
-    }
-
     /**
      * Returns an array of node type names including the passed $nodeType and all its supertypes, recursively
      *
-     * @param NodeType $nodeType
      * @return array<String>
      */
-    public function extractNodeTypeNamesAndSupertypes(NodeType $nodeType): array
+    public function extractNodeTypeNamesAndSupertypes(Node $node): array
     {
+        $nodeType = $this->contentRepositoryRegistry->get($node->contentRepositoryId)
+            ->getNodeTypeManager()->getNodeType($node->nodeTypeName);
+        if (!$nodeType) {
+            return [];
+        }
         $nodeTypeNames = [];
         $this->extractNodeTypeNamesAndSupertypesInternal($nodeType, $nodeTypeNames);
         return array_values($nodeTypeNames);
+    }
+
+    public function extractHiddenState(Node $node): bool
+    {
+        return $node->tags->contain(SubtreeTag::disabled());
     }
 
     /**

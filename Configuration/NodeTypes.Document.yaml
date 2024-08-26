@@ -33,7 +33,7 @@
               type: text
     'neos_hidden_in_index':
       search:
-        indexing: '${node.hiddenInIndex}'
+        indexing: "${q(node).property('hiddenInMenu'}"
 
     # deliberately don't map or index this
     '_hiddenInIndex':
