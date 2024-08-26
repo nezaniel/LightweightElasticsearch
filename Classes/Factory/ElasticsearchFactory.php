@@ -93,7 +93,8 @@ class ElasticsearchFactory
                     $this->eelEvaluator,
                     $settings
                 ),
-                $settings
+                $settings,
+                $this->contentRepositoryRegistry,
             ),
             aliasManager: $aliasManager,
             logger: $logger,
