@@ -21,6 +21,9 @@ readonly class SearchResultDocument implements ProtectedContextAwareInterface
     ) {
     }
 
+    /**
+     * @param array<mixed> $hit
+     */
     public static function fromElasticsearchJsonResponse(array $hit, Node $contextNode = null, ContentRepositoryRegistry $contentRepositoryRegistry = null): self
     {
         return new self($hit, $contextNode, $contentRepositoryRegistry);
@@ -30,6 +33,9 @@ readonly class SearchResultDocument implements ProtectedContextAwareInterface
     {
         $nodeAggregateId = NodeAggregateId::fromString($this->hit['_source']['neos_nodeaggregateid']);
 
+        if (!$this->contextNode) {
+            return null;
+        }
         $subgraph = $this->contentRepositoryRegistry?->subgraphForNode($this->contextNode);
         return $subgraph?->findNodeById($nodeAggregateId);
     }

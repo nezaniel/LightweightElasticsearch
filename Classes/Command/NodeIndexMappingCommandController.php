@@ -23,7 +23,6 @@ use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Cli\CommandController;
 use Symfony\Component\Yaml\Yaml;
-use function json_encode;
 
 /**
  * Provides CLI features for checking mapping information

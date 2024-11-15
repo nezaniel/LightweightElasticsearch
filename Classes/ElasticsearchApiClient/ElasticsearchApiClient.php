@@ -68,6 +68,7 @@ readonly class ElasticsearchApiClient
     public function getAllIndexNames(): IndexNames
     {
         $stats = $this->systemApi->stats($this->apiCaller, $this->baseUrl);
+        /** @var array<string> $indexNames */
         $indexNames = array_keys($stats['indices']);
         asort($indexNames);
         return IndexNames::fromArray($indexNames);

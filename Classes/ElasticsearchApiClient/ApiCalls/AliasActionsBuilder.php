@@ -10,7 +10,7 @@ use Sandstorm\LightweightElasticsearch\SharedModel\IndexName;
 class AliasActionsBuilder implements \JsonSerializable
 {
     /**
-     * @var array<string,mixed>
+     * @var array<array<string,mixed>>
      */
     private array $aliasActions = [];
 

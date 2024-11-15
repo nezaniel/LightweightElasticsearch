@@ -31,12 +31,15 @@ class IndexingEelEvaluator
 
     public function runPropertyIndexingExpression(PropertySearchSettings $propertySearchSettings, Node $node, Elasticsearch $elasticsearch): mixed
     {
-        return $this->evaluate($propertySearchSettings->indexingEelExpression, $node, $propertySearchSettings->propertyName, $elasticsearch);
+        return $this->evaluate($propertySearchSettings->indexingEelExpression ?: '', $node, $propertySearchSettings->propertyName, $elasticsearch);
     }
 
+    /**
+     * @param array<mixed> $fulltextIndex
+     */
     public function runFulltextExpression(PropertySearchSettings $propertySearchSettings, Node $node, array &$fulltextIndex, Elasticsearch $elasticsearch): void
     {
-        $extractedFulltext = $this->evaluate($propertySearchSettings->fulltextExtractorEelExpression, $node, $propertySearchSettings->propertyName, $elasticsearch);
+        $extractedFulltext = $this->evaluate($propertySearchSettings->fulltextExtractorEelExpression ?: '', $node, $propertySearchSettings->propertyName, $elasticsearch);
 
         if (!is_array($extractedFulltext)) {
             throw new \RuntimeException('The fulltext index for property "' . $propertySearchSettings->propertyName . '" of node "' . $node->aggregateId->value . '" could not be retrieved; the Eel expression "' . $propertySearchSettings->fulltextExtractorEelExpression . '" is no valid fulltext extraction expression.', 1693468443);

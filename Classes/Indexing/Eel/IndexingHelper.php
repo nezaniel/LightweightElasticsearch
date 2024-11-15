@@ -87,12 +87,9 @@ class IndexingHelper implements ProtectedContextAwareInterface
      */
     public function convertArrayOfNodesToArrayOfNodeIdentifiers(iterable $nodes): array
     {
-        if (!is_array($nodes) && !$nodes instanceof \Traversable) {
-            return [];
-        }
         $nodeIdentifiers = [];
         foreach ($nodes as $node) {
-            assert($node instanceof  Node);
+            assert($node instanceof Node);
             $nodeIdentifiers[] = $node->aggregateId->value;
         }
 
@@ -104,13 +101,10 @@ class IndexingHelper implements ProtectedContextAwareInterface
      *
      * @param iterable<Node> $nodes
      * @param string $propertyName
-     * @return array
+     * @return array<mixed>
      */
     public function convertArrayOfNodesToArrayOfNodeProperty(iterable $nodes, string $propertyName): array
     {
-        if (!is_array($nodes) && !$nodes instanceof \Traversable) {
-            return [];
-        }
         $nodeProperties = [];
         foreach ($nodes as $node) {
             $nodeProperties[] = $node->getProperty($propertyName);
