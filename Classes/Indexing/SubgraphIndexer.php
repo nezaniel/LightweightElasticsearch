@@ -2,12 +2,10 @@
 
 namespace Sandstorm\LightweightElasticsearch\Indexing;
 
-use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindChildNodesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\NodeType\NodeTypeCriteria;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
-use Neos\ContentRepository\Core\Projection\Workspace\Workspace;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
@@ -37,12 +35,14 @@ readonly class SubgraphIndexer
     public function indexSubgraph(ContentSubgraphInterface $subgraph, WorkspaceName $workspaceName, IndexName $indexName, Elasticsearch $elasticsearch): void
     {
         $bulkRequestSender = $this->bulkRequestSenderFactory->withIndexName($indexName);
-        // TODO: single site??
-        $node = $subgraph->findRootNodeByType(NodeTypeName::fromString('Neos.Neos:Sites')); // TODO
-        if (!$node) {
-            return;
+        foreach ($this->settings->rootNodeTypeNames as $nodeTypeName) {
+            $node = $subgraph->findRootNodeByType($nodeTypeName);
+            if (!$node) {
+                continue;
+            }
+            $this->indexDocumentNodesRecursively($node->aggregateId, $subgraph, $workspaceName, $bulkRequestSender, $elasticsearch);
         }
-        $this->indexDocumentNodesRecursively($node->aggregateId, $subgraph, $workspaceName, $bulkRequestSender, $elasticsearch);
+
         $bulkRequestSender->close();
     }
 
@@ -51,7 +51,7 @@ readonly class SubgraphIndexer
         $documentNodes = $subgraph->findChildNodes(
             $parentNodeAggregateId,
             FindChildNodesFilter::create(
-                nodeTypes: NodeTypeCriteria::fromFilterString('Neos.Neos:Document')
+                nodeTypes: NodeTypeCriteria::fromFilterString($this->settings->nodeTypeFilter)
             )
         );
 

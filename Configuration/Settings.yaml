@@ -26,11 +26,8 @@ Sandstorm:
     # for prod, we want to log them.
     handleElasticsearchExceptions: log
 
-
-
     elasticsearch:
       baseUrl: http://127.0.0.1:9200
-
 
     defaultConfigurationPerType:
       string:
@@ -58,3 +55,7 @@ Sandstorm:
       Array: Neos\Eel\Helper\ArrayHelper
       Date: Neos\Eel\Helper\DateHelper
       Indexing: Sandstorm\LightweightElasticsearch\Indexing\Eel\IndexingHelper
+
+    rootNodeTypeNames:
+      Neos.Neos:Sites: true
+    nodeTypeFilter: 'Neos.Neos:Document'

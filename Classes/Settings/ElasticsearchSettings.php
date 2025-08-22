@@ -2,6 +2,7 @@
 
 namespace Sandstorm\LightweightElasticsearch\Settings;
 
+use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\Flow\Annotations as Flow;
 use Sandstorm\LightweightElasticsearch\SharedModel\ElasticsearchBaseUrl;
 use Sandstorm\LightweightElasticsearch\SharedModel\IndexNamePrefix;
@@ -16,6 +17,7 @@ readonly class ElasticsearchSettings
 {
     /**
      * @param array<mixed> $defaultContext
+     * @param array<NodeTypeName> $rootNodeTypeNames
      */
     private function __construct(
         public IndexNamePrefix $nodeIndexNamePrefix,
@@ -28,6 +30,8 @@ readonly class ElasticsearchSettings
         public int $indexingBatchSizeElements,
         public int $indexingBatchSizeOctets,
         public int $assetMaximumFileSize,
+        public array $rootNodeTypeNames,
+        public string $nodeTypeFilter,
     ) {
     }
 
@@ -60,6 +64,15 @@ readonly class ElasticsearchSettings
             indexingBatchSizeOctets: $settings['indexing']['batchSize']['octets'] ?? 40_000_000,
             // OLD: * @Flow\InjectConfiguration(package="Flowpack.ElasticSearch.ContentRepositoryAdaptor", path="indexing.assetExtraction.maximumFileSize")
             assetMaximumFileSize: $settings['indexing']['assetExtraction']['maximumFileSize'] ?? 104_857_600,
+            rootNodeTypeNames: array_map(
+                fn (string $nodeTypeName): NodeTypeName => NodeTypeName::fromString($nodeTypeName),
+                array_keys(
+                    array_filter(
+                        $settings['rootNodeTypeNames'] ?? ['Neos.Neos:Sites' => true]
+                    )
+                )
+            ),
+            nodeTypeFilter: $settings['nodeTypeFilter'] ?? 'Neos.Neos:Document',
         );
     }
 
