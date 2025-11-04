@@ -36,6 +36,6 @@
         indexing: "${q(node).property('hiddenInMenu')}"
 
     # deliberately don't map or index this
-    '_hiddenInIndex':
+    'hiddenInMenu':
       search:
         indexing: false
