@@ -24,7 +24,7 @@ readonly class SearchResultDocument implements ProtectedContextAwareInterface
     /**
      * @param array<mixed> $hit
      */
-    public static function fromElasticsearchJsonResponse(array $hit, Node $contextNode = null, ContentRepositoryRegistry $contentRepositoryRegistry = null): self
+    public static function fromElasticsearchJsonResponse(array $hit, ?Node $contextNode = null, ?ContentRepositoryRegistry $contentRepositoryRegistry = null): self
     {
         return new self($hit, $contextNode, $contentRepositoryRegistry);
     }

@@ -48,7 +48,7 @@ class BulkRequestSender
     /**
      * @param array<mixed> $documentData
      */
-    public function indexDocument(array $documentData, string $documentId = null): void
+    public function indexDocument(array $documentData, ?string $documentId = null): void
     {
         if ($documentId === null) {
             $this->addPayloadLine(

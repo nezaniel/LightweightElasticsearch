@@ -51,7 +51,7 @@ class NeosFulltextQueryBuilder implements SearchQueryBuilderInterface, Protected
      * @param string|null $query
      * @return $this
      */
-    public function fulltext(string $query = null): self
+    public function fulltext(?string $query = null): self
     {
         $this->boolQuery->must(SimpleQueryStringBuilder::create($query ?? '')->fields([
             'neos_fulltext.h1^5',

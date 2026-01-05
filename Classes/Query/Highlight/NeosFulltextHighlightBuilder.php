@@ -16,12 +16,12 @@ final class NeosFulltextHighlightBuilder implements HighlightBuilderInterface, P
      */
     private array $extraHighlightFields = [];
 
-    public static function create(int $fragmentSize, int $fragmentCount = null): self
+    public static function create(int $fragmentSize, ?int $fragmentCount = null): self
     {
         return new self($fragmentSize, $fragmentCount);
     }
 
-    private function __construct(int $fragmentSize, int $fragmentCount = null)
+    private function __construct(int $fragmentSize, ?int $fragmentCount = null)
     {
         $this->fragmentSize = $fragmentSize;
         $this->fragmentCount = $fragmentCount;

@@ -55,7 +55,7 @@ class ElasticsearchHelper implements ProtectedContextAwareInterface
      * Create a new Search Query builder
      * @param array<mixed> $additionalIndices
      */
-    public function createRequest(Node $contextNode = null, array $additionalIndices = []): SearchRequestBuilder
+    public function createRequest(?Node $contextNode = null, array $additionalIndices = []): SearchRequestBuilder
     {
         $contentRepositoryId = $contextNode?->contentRepositoryId ?: ContentRepositoryId::fromString('default');
         $elasticsearch = $this->elasticsearchFactory->build(
@@ -83,7 +83,7 @@ class ElasticsearchHelper implements ProtectedContextAwareInterface
     /**
      * @param array<mixed> $additionalIndices
      */
-    public function createAggregationRequest(Node $contextNode = null, array $additionalIndices = []): AggregationRequestBuilder
+    public function createAggregationRequest(?Node $contextNode = null, array $additionalIndices = []): AggregationRequestBuilder
     {
         $contentRepositoryId = $contextNode?->contentRepositoryId ?: ContentRepositoryId::fromString('default');
         $elasticsearch = $this->elasticsearchFactory->build(

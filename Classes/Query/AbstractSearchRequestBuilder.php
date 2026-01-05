@@ -49,7 +49,7 @@ abstract class AbstractSearchRequestBuilder implements ProtectedContextAwareInte
      * @param string|null $message an optional message to identify the log entry
      * @api
      */
-    public function log(string $message = null): self
+    public function log(?string $message = null): self
     {
         $this->logThisQuery = true;
         $this->logMessage = $message;

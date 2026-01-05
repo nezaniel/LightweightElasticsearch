@@ -50,7 +50,7 @@ class ApiCaller
         $this->browser->setRequestEngine($requestEngine);
     }
 
-    public function request(string $method, UriInterface $url, string $content = null): ResponseInterface
+    public function request(string $method, UriInterface $url, ?string $content = null): ResponseInterface
     {
         $request = $this->requestFactory->createServerRequest($method, $url);
         $request = $request->withHeader('Content-Type', 'application/json');
