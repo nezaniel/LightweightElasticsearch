@@ -11,8 +11,8 @@ use Psr\Log\LoggerInterface;
 use Sandstorm\LightweightElasticsearch\Indexing\AliasManager;
 use Sandstorm\LightweightElasticsearch\Indexing\CustomIndexer;
 use Sandstorm\LightweightElasticsearch\Indexing\CustomIndexerFactory;
-use Sandstorm\LightweightElasticsearch\Indexing\SubgraphIndexer;
 use Sandstorm\LightweightElasticsearch\ElasticsearchApiClient\ElasticsearchApiClient;
+use Sandstorm\LightweightElasticsearch\Indexing\SubgraphIndexerInterface;
 use Sandstorm\LightweightElasticsearch\NodeTypeMapping\NodeTypeMappingBuilder;
 use Sandstorm\LightweightElasticsearch\Settings\ElasticsearchSettings;
 use Sandstorm\LightweightElasticsearch\SharedModel\AliasName;
@@ -72,7 +72,7 @@ class Elasticsearch
         private readonly ContentRepository $contentRepository,
         public readonly ElasticsearchApiClient $apiClient,
         private readonly NodeTypeMappingBuilder $nodeTypeMappingBuilder,
-        private readonly SubgraphIndexer $documentIndexer,
+        private readonly SubgraphIndexerInterface $documentIndexer,
         private readonly AliasManager $aliasManager,
         public readonly LoggerInterface $logger,
         private readonly CustomIndexerFactory $customIndexerFactory
@@ -98,7 +98,7 @@ class Elasticsearch
             }
             $this->apiClient->createIndex($indexName, $this->settings->createIndexParameters($indexName));
 
-            $mappingDefinition = $this->nodeTypeMappingBuilder->build($this->contentRepository->getNodeTypeManager());
+            $mappingDefinition = $this->nodeTypeMappingBuilder->build($this->contentRepository->id, $this->contentRepository->getNodeTypeManager());
             $this->apiClient->updateMapping($indexName, $mappingDefinition);
 
             // 2) Index nodes

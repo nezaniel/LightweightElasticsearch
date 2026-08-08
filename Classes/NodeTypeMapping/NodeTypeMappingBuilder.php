@@ -4,21 +4,21 @@ namespace Sandstorm\LightweightElasticsearch\NodeTypeMapping;
 
 use Neos\ContentRepository\Core\NodeType\NodeType;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
+use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Psr\Log\LoggerInterface;
 use Sandstorm\LightweightElasticsearch\Settings\DefaultConfigurationPerType;
 use Sandstorm\LightweightElasticsearch\Settings\NodeTypeSearchSettings;
 use Sandstorm\LightweightElasticsearch\SharedModel\MappingDefinition;
 
-class NodeTypeMappingBuilder
+class NodeTypeMappingBuilder implements NodeTypeMappingBuilderInterface
 {
-
     public function __construct(
         private readonly DefaultConfigurationPerType $defaultConfigurationPerType,
         private readonly LoggerInterface $logger
     ) {
     }
 
-    public function build(NodeTypeManager $nodeTypeManager): MappingDefinition
+    public function build(ContentRepositoryId $contentRepositoryId, NodeTypeManager $nodeTypeManager): MappingDefinition
     {
         $mapping = MappingDefinition::empty();
         foreach ($nodeTypeManager->getNodeTypes() as $nodeTypeName => $nodeType) {

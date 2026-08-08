@@ -7,7 +7,6 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphInterface
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindChildNodesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\NodeType\NodeTypeCriteria;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
-use Neos\ContentRepository\Core\Projection\Workspace\Workspace;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
@@ -24,7 +23,7 @@ use Sandstorm\LightweightElasticsearch\SharedModel\MappingDefinition;
  * Main class to index a Subgraph
  */
 #[Flow\Proxy(false)]
-readonly class SubgraphIndexer
+readonly class SubgraphIndexer implements SubgraphIndexerInterface
 {
     public function __construct(
         private BulkRequestSenderFactory $bulkRequestSenderFactory,

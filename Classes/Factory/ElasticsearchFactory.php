@@ -2,7 +2,6 @@
 
 namespace Sandstorm\LightweightElasticsearch\Factory;
 
-use A\B;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Eel\CompilingEvaluator;
@@ -22,7 +21,9 @@ use Sandstorm\LightweightElasticsearch\ElasticsearchApiClient\ApiCalls\BulkApiCa
 use Sandstorm\LightweightElasticsearch\ElasticsearchApiClient\ApiCalls\IndexApiCalls;
 use Sandstorm\LightweightElasticsearch\ElasticsearchApiClient\ApiCalls\SearchApiCalls;
 use Sandstorm\LightweightElasticsearch\ElasticsearchApiClient\ElasticsearchApiClient;
+use Sandstorm\LightweightElasticsearch\Indexing\SubgraphIndexerInterface;
 use Sandstorm\LightweightElasticsearch\NodeTypeMapping\NodeTypeMappingBuilder;
+use Sandstorm\LightweightElasticsearch\NodeTypeMapping\NodeTypeMappingBuilderInterface;
 use Sandstorm\LightweightElasticsearch\Settings\ElasticsearchSettings;
 
 #[Flow\Scope("singleton")]
@@ -66,8 +67,24 @@ class ElasticsearchFactory
         );
     }
 
-    public function build(ContentRepositoryId $contentRepositoryId, LoggerInterface $logger): Elasticsearch
-    {
+    public function build(
+        ContentRepositoryId $contentRepositoryId,
+        LoggerInterface $logger,
+    ): Elasticsearch {
+        $nodeTypeMappingBuilderFQN = $this->settings['factory']['nodeTypeMappingBuilder']['className'] ?? NodeTypeMappingBuilder::class;
+        if (
+            !class_exists($nodeTypeMappingBuilderFQN)
+            || !in_array(NodeTypeMappingBuilderInterface::class, class_implements($nodeTypeMappingBuilderFQN))
+        ) {
+            $nodeTypeMappingBuilderFQN = NodeTypeMappingBuilder::class;
+        }
+        $subgraphIndexerFQN = $this->settings['factory']['subgraphIndexer']['className'] ?? SubgraphIndexer::class;
+        if (
+            !class_exists($subgraphIndexerFQN)
+            || !in_array(SubgraphIndexerInterface::class, class_implements($subgraphIndexerFQN))
+        ) {
+            $subgraphIndexerFQN = SubgraphIndexer::class;
+        }
         $settings = ElasticsearchSettings::fromArray($this->settings);
         $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
         $apiClient = $this->buildElasticsearchApiClient($settings);
@@ -84,11 +101,11 @@ class ElasticsearchFactory
             settings: $settings,
             contentRepository: $contentRepository,
             apiClient: $apiClient,
-            nodeTypeMappingBuilder: new NodeTypeMappingBuilder(
+            nodeTypeMappingBuilder: new $nodeTypeMappingBuilderFQN(
                 $settings->defaultConfigurationPerType,
                 $logger
             ),
-            documentIndexer: new SubgraphIndexer(
+            documentIndexer: new $subgraphIndexerFQN(
                 $bulkRequestSenderFactory,
                 new IndexingEelEvaluator(
                     $this->eelEvaluator,

@@ -26,11 +26,14 @@ Sandstorm:
     # for prod, we want to log them.
     handleElasticsearchExceptions: log
 
-
-
     elasticsearch:
       baseUrl: http://127.0.0.1:9200
 
+    factory:
+      nodeTypeMappingBuilder:
+        className: Sandstorm\LightweightElasticsearch\NodeTypeMapping\NodeTypeMappingBuilder
+      subgraphIndexer:
+        className: Sandstorm\LightweightElasticsearch\Indexing\SubgraphIndexer
 
     defaultConfigurationPerType:
       string:
