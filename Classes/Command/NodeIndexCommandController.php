@@ -40,7 +40,7 @@ class NodeIndexCommandController extends CommandController
      * @param string $workspace name of the workspace which should be indexed
      * @param bool $verbose output extra details
      */
-    public function buildCommand(string $workspace = 'live', bool $verbose = false): void
+    public function buildCommand(string $contentRepositoryId = 'default', string $workspace = 'live', bool $verbose = false): void
     {
         $consoleLogBackend = new ConsoleBackend();
         if ($verbose) {
@@ -48,8 +48,7 @@ class NodeIndexCommandController extends CommandController
         }
         $logger = new Logger([$consoleLogBackend]);
 
-        $elasticsearch = $this->elasticsearchFactory->build(ContentRepositoryId::fromString('default'), $logger);
-
+        $elasticsearch = $this->elasticsearchFactory->build(ContentRepositoryId::fromString($contentRepositoryId), $logger);
 
         $elasticsearch->indexWorkspace(WorkspaceName::fromString($workspace));
         $this->outputMemoryUsage();
