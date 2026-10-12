@@ -42,14 +42,14 @@ use Sandstorm\LightweightElasticsearch\Query\SearchRequestBuilder;
  *   .aggregation()
  *   .execute()
  */
+#[Flow\Scope('singleton')]
 class ElasticsearchHelper implements ProtectedContextAwareInterface
 {
     #[Flow\Inject]
+    protected ElasticsearchFactory $elasticsearchFactory;
+
+    #[Flow\Inject]
     protected LoggerInterface $logger;
-    public function __construct(
-        private readonly ElasticsearchFactory $elasticsearchFactory,
-    ) {
-    }
 
     /**
      * Create a new Search Query builder
